@@ -1,5 +1,5 @@
 {
-    "name": "evert/sitemap-php",
+    "name": "emagister/sitemap-php",
     "type": "library",
     "description": "Lightweight library for generating Google sitemap XML files",
     "keywords": ["Sitemap"],

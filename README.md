@@ -48,6 +48,12 @@ from a sql result, or whatever.
         $sitemap->addItem('/post/' . $post['slug'], '0.6', 'weekly', $post['created_at']);
     }
 
+Finish writing in current file and starting into a new other.
+
+    $sitemap->forceEndFile();
+    $sitemap->setFilename('newname');
+    $sitemap->startSitemap();
+
 If you need to change domain for sitemap instance, you can override it via `setDomain` method.
 
 	$sitemap->setDomain('http://blog.example.com');

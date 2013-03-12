@@ -23,17 +23,18 @@ class Sitemap {
     private $writer;
     private $domain;
     private $path;
-    private $filename = 'sitemap';
-    private $current_item = 0;
-    private $current_sitemap = 0;
-    private $sitemapFiles = array();
+    private $filename           = 'sitemap';
+    private $indexFilename      = 'sitemaps';
+    private $current_item       = 0;
+    private $current_sitemap    = 0;
+    private $sitemapFiles       = array();
 
-    const EXT = '.xml';
-    const SCHEMA = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-    const DEFAULT_PRIORITY = 0.5;
-    const ITEM_PER_SITEMAP = 50000;
-    const SEPARATOR = '-';
-    const INDEX_SUFFIX = 'index';
+    const EXT               = '.xml';
+    const SCHEMA            = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+    const DEFAULT_PRIORITY  = 0.5;
+    const ITEM_PER_SITEMAP  = 50000;
+    const SEPARATOR         = '_';
+    const INDEX_SUFFIX      = 'index';
 
     /**
      * Constructor
@@ -132,6 +133,28 @@ class Sitemap {
     }
 
     /**
+     * Returns filename of sitemap index file
+     *
+     * @return string
+     */
+    private function getIndexFilename()
+    {
+        return $this->indexFilename;
+    }
+
+    /**
+     * Sets filename of sitemap index file
+     *
+     * @param $indexFilename
+     * @return Sitemap
+     */
+    public function setIndexFilename($indexFilename)
+    {
+        $this->indexFilename = $indexFilename;
+        return $this;
+    }
+
+    /**
      * Returns current item count
      *
      * @return int
@@ -209,7 +232,7 @@ class Sitemap {
     public function startSitemap()
     {
         $this->setWriter(new \XMLWriter());
-        $this->getWriter()->openURI($this->getSitemapFile());
+        $this->getWriter()->openURI($this->getFile());
         $this->getWriter()->startDocument('1.0', 'UTF-8');
         $this->getWriter()->setIndent(true);
         $this->getWriter()->startElement('urlset');
@@ -220,7 +243,7 @@ class Sitemap {
      * Retrieves current file
      * @return string
      */
-    private function getSitemapFile()
+    private function getFile()
     {
         return $this->getPath() . $this->getFilename() . self::SEPARATOR . $this->getCurrentSitemap() . self::EXT;
     }
@@ -236,14 +259,18 @@ class Sitemap {
      */
     public function addItem($loc, $priority = self::DEFAULT_PRIORITY, $changefreq = NULL, $lastmod = NULL)
     {
-        if (($this->getCurrentItem() % self::ITEM_PER_SITEMAP) == 0) {
-            if ($this->getWriter() instanceof \XMLWriter) {
-                $this->endSitemap();
-            }
+        // First file
+        if ($this->getCurrentItem() == 0) {
             $this->startSitemap();
+            // End file because of limit size
+        } else if (($this->getCurrentItem() % self::ITEM_PER_SITEMAP) == 0) {
+            $this->endSitemap();
             $this->incCurrentSitemap();
+            $this->startSitemap();
         }
         $this->incCurrentItem();
+
+        // URL element
         $this->getWriter()->startElement('url');
         $this->getWriter()->writeElement('loc', $loc);
         $this->getWriter()->writeElement('priority', $priority);
@@ -254,6 +281,7 @@ class Sitemap {
             $this->getWriter()->writeElement('lastmod', $this->getLastModifiedDate($lastmod));
         }
         $this->getWriter()->endElement();
+
         return $this;
     }
 
@@ -276,9 +304,11 @@ class Sitemap {
      */
     private function endSitemap()
     {
-        $this->getWriter()->endElement();
-        $this->getWriter()->endDocument();
-        $this->addSitemapFile($this->getFilename() . self::SEPARATOR . $this->getCurrentSitemap());
+        if ($this->getWriter() instanceof \XMLWriter) {
+            $this->getWriter()->endElement();
+            $this->getWriter()->endDocument();
+            $this->addSitemapFile($this->getFilename() . self::SEPARATOR . $this->getCurrentSitemap());
+        }
     }
 
     /**
@@ -299,13 +329,18 @@ class Sitemap {
      */
     public function createSitemapIndex($loc, $lastmod = 'Today')
     {
+        // Close last file
         $this->endSitemap();
+
+        // Writer for the index file
         $indexwriter = new \XMLWriter();
-        $indexwriter->openURI($this->getPath() . $this->getFilename() . self::EXT);
+        $indexwriter->openURI($this->getPath() . $this->getIndexFilename() . self::EXT);
         $indexwriter->startDocument('1.0', 'UTF-8');
         $indexwriter->setIndent(true);
         $indexwriter->startElement('sitemapindex');
         $indexwriter->writeAttribute('xmlns', self::SCHEMA);
+
+        // Loop over the files
         foreach($this->getSitemapFiles() as $file) {
             $indexwriter->startElement('sitemap');
             $indexwriter->writeElement('loc', $loc . $file . self::EXT);

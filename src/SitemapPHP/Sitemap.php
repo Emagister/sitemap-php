@@ -21,7 +21,6 @@ class Sitemap {
      * @var \XMLWriter
      */
     private $writer;
-    private $domain;
     private $path;
     private $filename           = 'sitemap';
     private $indexFilename      = 'sitemaps';
@@ -38,34 +37,9 @@ class Sitemap {
 
     /**
      * Constructor
-     *
-     * @param string $domain
      */
-    public function __construct($domain)
+    public function __construct()
     {
-        $this->setDomain($domain);
-    }
-
-    /**
-     * Sets root path of the website, starting with http:// or https://
-     *
-     * @param string $domain
-     * @return \SitemapPHP\Sitemap
-     */
-    public function setDomain($domain)
-    {
-        $this->domain = $domain;
-        return $this;
-    }
-
-    /**
-     * Returns root path of the website
-     *
-     * @return string
-     */
-    private function getDomain()
-    {
-        return $this->domain;
     }
 
     /**

@@ -27,6 +27,7 @@ class Sitemap {
     private $current_item       = 0;
     private $current_sitemap    = 0;
     private $sitemapFiles       = array();
+    private $patternFile        = 'sitemap_%s';
 
     const EXT               = '.xml';
     const SCHEMA            = 'http://www.sitemaps.org/schemas/sitemap/0.9';
@@ -125,6 +126,29 @@ class Sitemap {
     public function setIndexFilename($indexFilename)
     {
         $this->indexFilename = $indexFilename;
+        return $this;
+    }
+
+    /**
+     * Returns pattern of the sitemaps files
+     *
+     * @return string
+     */
+    public function getPatternFile()
+    {
+        return $this->patternFile;
+    }
+
+    /**
+     * Sets pattern of the sitemaps files
+     *
+     * @param $patternFile
+     * @return $this
+     */
+    public function setPatternFile($patternFile)
+    {
+        $this->patternFile = $patternFile;
+
         return $this;
     }
 
@@ -315,9 +339,10 @@ class Sitemap {
         $indexwriter->writeAttribute('xmlns', self::SCHEMA);
 
         // Loop over the files
-        foreach($this->getSitemapFiles() as $file) {
+        $files = glob($this->getPath() . $this->getPatternFile() . '*.xml'); // get all sitemaps with the pattern
+        foreach($files as $file) {
             $indexwriter->startElement('sitemap');
-            $indexwriter->writeElement('loc', $loc . $file . self::EXT);
+            $indexwriter->writeElement('loc', $loc . str_replace($this->getPath(), '', $file));
             $indexwriter->writeElement('lastmod', $this->getLastModifiedDate($lastmod));
             $indexwriter->endElement();
         }

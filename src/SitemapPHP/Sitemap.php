@@ -29,19 +29,19 @@ class Sitemap {
     private $sitemapFiles       = array();
     private $patternFile        = 'sitemap_%s';
 
+    /**
+     * Keeps track of external sitemaps that need to be added in the main sitemap file.
+     *
+     * @var array
+     */
+    private $externalSitemaps   = [];
+
     const EXT               = '.xml';
     const SCHEMA            = 'http://www.sitemaps.org/schemas/sitemap/0.9';
     const DEFAULT_PRIORITY  = 0.5;
     const ITEM_PER_SITEMAP  = 50000;
     const SEPARATOR         = '_';
     const INDEX_SUFFIX      = 'index';
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
 
     /**
      * Returns XMLWriter object instance
@@ -217,11 +217,11 @@ class Sitemap {
     }
 
     /**
-     * @return array
+     * @param string $location
      */
-    private function getSitemapFiles()
+    public function addExternalSitemap($location)
     {
-        return $this->sitemapFiles;
+        $this->externalSitemaps[] = $location;
     }
 
     /**
@@ -340,13 +340,32 @@ class Sitemap {
 
         // Loop over the files
         $files = glob($this->getPath() . $this->getPatternFile() . '*.xml'); // get all sitemaps with the pattern
+
+        $lastModified = $this->getLastModifiedDate($lastmod);
+
         foreach($files as $file) {
-            $indexwriter->startElement('sitemap');
-            $indexwriter->writeElement('loc', $loc . str_replace($this->getPath(), '', $file));
-            $indexwriter->writeElement('lastmod', $this->getLastModifiedDate($lastmod));
-            $indexwriter->endElement();
+            $location = $loc . str_replace($this->getPath(), '', $file);
+            $this->writeSitemap($indexwriter, $location, $lastModified);
         }
+
+        foreach ($this->externalSitemaps as $externalSitemap) {
+            $this->writeSitemap($indexwriter, $externalSitemap, $lastModified);
+        }
+
         $indexwriter->endElement();
         $indexwriter->endDocument();
+    }
+
+    /**
+     * @param \XmlWriter $indexwriter
+     * @param string     $location
+     * @param string     $lastModified
+     */
+    private function writeSitemap(\XmlWriter $indexwriter, $location, $lastModified)
+    {
+        $indexwriter->startElement('sitemap');
+        $indexwriter->writeElement('loc', $location);
+        $indexwriter->writeElement('lastmod', $lastModified);
+        $indexwriter->endElement();
     }
 }

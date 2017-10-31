@@ -28,6 +28,7 @@ class Sitemap {
     private $current_sitemap    = 0;
     private $sitemapFiles       = array();
     private $patternFile        = 'sitemap_%s';
+    private $uniqueFile         = false;
 
     /**
      * Keeps track of external sitemaps that need to be added in the main sitemap file.
@@ -92,7 +93,11 @@ class Sitemap {
      */
     private function getFilename()
     {
-        return $this->filename;
+        if ($this->uniqueFile) {
+            return $this->filename;
+        }
+
+        return $this->filename . self::SEPARATOR . $this->getCurrentSitemap();
     }
 
     /**
@@ -243,6 +248,10 @@ class Sitemap {
      */
     private function getFile()
     {
+        if ($this->uniqueFile) {
+            return $this->getPath() . $this->getFilename() . self::EXT;
+        }
+
         return $this->getPath() . $this->getFilename() . self::SEPARATOR . $this->getCurrentSitemap() . self::EXT;
     }
 
@@ -305,7 +314,7 @@ class Sitemap {
         if ($this->getWriter() instanceof \XMLWriter) {
             $this->getWriter()->endElement();
             $this->getWriter()->endDocument();
-            $this->addSitemapFile($this->getFilename() . self::SEPARATOR . $this->getCurrentSitemap());
+            $this->addSitemapFile($this->getFilename());
         }
     }
 
@@ -367,5 +376,13 @@ class Sitemap {
         $indexwriter->writeElement('loc', $location);
         $indexwriter->writeElement('lastmod', $lastModified);
         $indexwriter->endElement();
+    }
+
+    /**
+     * @param $uniqueFile Boolean
+     */
+    public function setUniqueFile($uniqueFile)
+    {
+        $this->uniqueFile = $uniqueFile;
     }
 }

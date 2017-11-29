@@ -15,34 +15,35 @@ namespace SitemapPHP;
  * @since      Class available since Version 1.0.0
  * @link       http://github.com/osmanungur/sitemap-php
  */
-class Sitemap {
+class Sitemap
+{
 
     /**
      * @var \XMLWriter
      */
     private $writer;
     private $path;
-    private $filename           = 'sitemap';
-    private $indexFilename      = 'sitemaps';
-    private $current_item       = 0;
-    private $current_sitemap    = 0;
-    private $sitemapFiles       = array();
-    private $patternFile        = 'sitemap_%s';
-    private $uniqueFile         = false;
+    private $filename = 'sitemap';
+    private $indexFilename = 'sitemaps';
+    private $current_item = 0;
+    private $current_sitemap = 0;
+    private $sitemapFiles = array();
+    private $patternFile = 'sitemap_%s';
+    private $uniqueFile = false;
 
     /**
      * Keeps track of external sitemaps that need to be added in the main sitemap file.
      *
      * @var array
      */
-    private $externalSitemaps   = [];
+    private $externalSitemaps = [];
 
-    const EXT               = '.xml';
-    const SCHEMA            = 'https://www.sitemaps.org/schemas/sitemap/0.9';
-    const DEFAULT_PRIORITY  = 0.5;
-    const ITEM_PER_SITEMAP  = 50000;
-    const SEPARATOR         = '_';
-    const INDEX_SUFFIX      = 'index';
+    const EXT = '.xml';
+    const SCHEMA = 'https://www.sitemaps.org/schemas/sitemap/0.9';
+    const DEFAULT_PRIORITY = 0.5;
+    const ITEM_PER_SITEMAP = 50000;
+    const SEPARATOR = '_';
+    const INDEX_SUFFIX = 'index';
 
     /**
      * Returns XMLWriter object instance
@@ -78,11 +79,13 @@ class Sitemap {
      * Sets paths of sitemaps
      *
      * @param string $path
+     *
      * @return Sitemap
      */
     public function setPath($path)
     {
         $this->path = $path;
+
         return $this;
     }
 
@@ -104,11 +107,13 @@ class Sitemap {
      * Sets filename of sitemap file
      *
      * @param string $filename
+     *
      * @return Sitemap
      */
     public function setFilename($filename)
     {
         $this->filename = $filename;
+
         return $this;
     }
 
@@ -126,11 +131,13 @@ class Sitemap {
      * Sets filename of sitemap index file
      *
      * @param $indexFilename
+     *
      * @return Sitemap
      */
     public function setIndexFilename($indexFilename)
     {
         $this->indexFilename = $indexFilename;
+
         return $this;
     }
 
@@ -148,6 +155,7 @@ class Sitemap {
      * Sets pattern of the sitemaps files
      *
      * @param $patternFile
+     *
      * @return $this
      */
     public function setPatternFile($patternFile)
@@ -258,10 +266,14 @@ class Sitemap {
     /**
      * Adds an item to sitemap
      *
-     * @param string $loc URL of the page. This value must be less than 2,048 characters.
-     * @param float|string $priority The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0.
-     * @param string $changefreq How frequently the page is likely to change. Valid values are always, hourly, daily, weekly, monthly, yearly and never.
-     * @param string|int $lastmod The date of last modification of url. Unix timestamp or any English textual datetime description.
+     * @param string       $loc        URL of the page. This value must be less than 2,048 characters.
+     * @param float|string $priority   The priority of this URL relative to other URLs on your site. Valid values range
+     *                                 from 0.0 to 1.0.
+     * @param string       $changefreq How frequently the page is likely to change. Valid values are always, hourly,
+     *                                 daily, weekly, monthly, yearly and never.
+     * @param string|int   $lastmod    The date of last modification of url. Unix timestamp or any English textual
+     *                                 datetime description.
+     *
      * @return Sitemap
      */
     public function addItem($loc, $priority = self::DEFAULT_PRIORITY, $changefreq = NULL, $lastmod = NULL)
@@ -296,6 +308,7 @@ class Sitemap {
      * Prepares given date for sitemap
      *
      * @param string $date Unix timestamp or any English textual datetime description
+     *
      * @return string Year-Month-Day formatted date.
      */
     private function getLastModifiedDate($date)
@@ -303,6 +316,7 @@ class Sitemap {
         if (!ctype_digit($date)) {
             $date = strtotime($date);
         }
+
         return date('Y-m-d', $date);
     }
 
@@ -331,8 +345,9 @@ class Sitemap {
     /**
      * Writes Google sitemap index for generated sitemap files
      *
-     * @param string $loc Accessible URL path of sitemaps
-     * @param string|int $lastmod The date of last modification of sitemap. Unix timestamp or any English textual datetime description.
+     * @param string     $loc     Accessible URL path of sitemaps
+     * @param string|int $lastmod The date of last modification of sitemap. Unix timestamp or any English textual
+     *                            datetime description.
      */
     public function createSitemapIndex($loc, $lastmod = 'Today')
     {
@@ -352,7 +367,7 @@ class Sitemap {
 
         $lastModified = $this->getLastModifiedDate($lastmod);
 
-        foreach($files as $file) {
+        foreach ($files as $file) {
             $location = $loc . str_replace($this->getPath(), '', $file);
             $this->writeSitemap($indexwriter, $location, $lastModified);
         }

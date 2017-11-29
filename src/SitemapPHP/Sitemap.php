@@ -38,7 +38,7 @@ class Sitemap {
     private $externalSitemaps   = [];
 
     const EXT               = '.xml';
-    const SCHEMA            = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+    const SCHEMA            = 'https://www.sitemaps.org/schemas/sitemap/0.9';
     const DEFAULT_PRIORITY  = 0.5;
     const ITEM_PER_SITEMAP  = 50000;
     const SEPARATOR         = '_';

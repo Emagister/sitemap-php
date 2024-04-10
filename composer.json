@@ -16,7 +16,9 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=8.1",
+        "ext-xmlwriter": "*",
+        "ext-ctype": "*"
     },
     "autoload": {
         "psr-0": { "SitemapPHP": "src/" }

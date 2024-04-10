@@ -2,6 +2,8 @@
 
 namespace SitemapPHP;
 
+use XMLWriter;
+
 /**
  * Sitemap
  *
@@ -311,7 +313,7 @@ class Sitemap
      *
      * @return string Year-Month-Day formatted date.
      */
-    private function getLastModifiedDate($date)
+    private function getLastModifiedDate(string $date)
     {
         if (!ctype_digit($date)) {
             $date = strtotime($date);

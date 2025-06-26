@@ -43,7 +43,7 @@ class Sitemap
     const EXT = '.xml';
     const SCHEMA = 'http://www.sitemaps.org/schemas/sitemap/0.9';
     const DEFAULT_PRIORITY = 0.5;
-    const ITEM_PER_SITEMAP = 50000;
+    const ITEM_PER_SITEMAP = 30000;
     const SEPARATOR = '_';
     const INDEX_SUFFIX = 'index';
 

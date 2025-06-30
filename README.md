@@ -1,7 +1,7 @@
 What is sitemap-php ?
 ----------
 
-Fast and lightweight class for generating Google sitemap XML files and index of sitemap files. Written on PHP and uses XMLWriter extension (wrapper for libxml xmlWriter API) for creating XML files. XMLWriter extension is enabled by default in PHP 5 >= 5.1.2. If you having more than 50000 url, it splits items to seperated files. _(In benchmarks, 1.000.000 url was generating in 8 seconds)_
+Fast and lightweight class for generating Google sitemap XML files and index of sitemap files. Written on PHP and uses XMLWriter extension (wrapper for libxml xmlWriter API) for creating XML files. XMLWriter extension is enabled by default in PHP 5 >= 5.1.2. If you having more than 30000 url, it splits items to seperated files. _(In benchmarks, 1.000.000 url was generating in 8 seconds)_
 
 This is a slightly modified version of the original. The Sitemap class is now added to a 'SitemapPHP' namespace, and a composer document has been added.
 
